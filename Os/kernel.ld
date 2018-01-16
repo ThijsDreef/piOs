@@ -5,28 +5,35 @@
 *	A linker script for generation of raspberry pi kernel images.
 ******************************************************************************/
 
-SECTIONS
-{
-	//hardware expects the start of the program to be at 0x8000
-	//so the first codeblock starts at .init
-	.init 0x8000 :
-	{
+SECTIONS {
+	/*
+	* First and formost we need the .init section, containing the code to
+        * be run first. We allow room for the ATAGs and stack and conform to
+        * the bootloader's expectation by putting this code at 0x8000.
+	*/
+	.init 0x8000 : {
 		*(.init)
 	}
-	//the other sections follow after init
-	.text :
-	{
+
+	/*
+	* Next we put the rest of the code.
+	*/
+	.text : {
 		*(.text)
 	}
-	//data comes after text
-	.data :
-	{
+
+	/*
+	* Next we put the data.
+	*/
+	.data : {
 		*(.data)
 	}
 
-	//new sections go here
-	/DISCARD/ :
-	{
+	/*
+	* Finally comes everything else. A fun trick here is to put all other
+	* sections into this section, which will be discarded by default.
+	*/
+	/DISCARD/ : {
 		*(*)
 	}
 }
